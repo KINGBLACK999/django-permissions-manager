@@ -12,6 +12,10 @@ license = { text = "MIT" }
 keywords = ["django", "permissions", "roles", "rbac", "ddd", "hexagonal"]
 classifiers = [
     "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
     "Framework :: Django :: 6.0",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -22,7 +26,7 @@ classifiers = [
     "Topic :: Security",
 ]
 dependencies = [
-    "Django>=6.0",
+    "Django>=4.2",
     "djangorestframework>=3.14",
 ]
 
