@@ -24,34 +24,31 @@ def make_user_role() -> UserRole:
 class TestRemoveRoleFromUserUseCase:
     def setup_method(self):
         self.repo = MagicMock()
-        self.use_case = RemoveRoleFromUserUseCase(user_role_repository=self.repo)
+        self.callback = MagicMock()
+        self.use_case = RemoveRoleFromUserUseCase(
+            user_role_repository=self.repo,
+            on_revoked=self.callback,
+        )
 
     def test_removes_existing_assignment(self):
         self.repo.get_by_id.return_value = make_user_role()
         self.use_case.execute("ur-1")
         self.repo.delete.assert_called_once_with("ur-1")
 
+    def test_fires_callback_after_removal(self):
+        self.repo.get_by_id.return_value = make_user_role()
+        self.use_case.execute("ur-1")
+        self.callback.assert_called_once_with(user_id="10", role_id="role-1")
+
     def test_raises_when_assignment_not_found(self):
         self.repo.get_by_id.return_value = None
         with pytest.raises(ValueError, match="does not exist"):
             self.use_case.execute("nonexistent")
         self.repo.delete.assert_not_called()
+        self.callback.assert_not_called()
 
-    def test_emits_role_revoked_signal(self):
-        from django_permissions_manager.infrastructure.django.signals import role_revoked
+    def test_no_callback_does_not_raise(self):
         self.repo.get_by_id.return_value = make_user_role()
-
-        received = []
-
-        def handler(sender, **kw):
-            received.append(kw)
-
-        role_revoked.connect(handler, weak=False)
-        try:
-            self.use_case.execute("ur-1")
-        finally:
-            role_revoked.disconnect(handler)
-
-        assert len(received) == 1
-        assert received[0]['user_id'] == "10"
-        assert received[0]['role_id'] == "role-1"
+        use_case = RemoveRoleFromUserUseCase(user_role_repository=self.repo)
+        use_case.execute("ur-1")  # should not raise
+        self.repo.delete.assert_called()

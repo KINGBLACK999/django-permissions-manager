@@ -25,9 +25,11 @@ class TestAssignRoleToUserUseCase:
     def setup_method(self):
         self.user_role_repo = MagicMock()
         self.role_repo = MagicMock()
+        self.callback = MagicMock()
         self.use_case = AssignRoleToUserUseCase(
             user_role_repository=self.user_role_repo,
             role_repository=self.role_repo,
+            on_assigned=self.callback,
         )
 
     def test_assigns_role_and_returns_dto(self):
@@ -50,6 +52,26 @@ class TestAssignRoleToUserUseCase:
 
         assert dto.assigned_by == "5"
 
+    def test_fires_callback_on_assignment(self):
+        role = make_role()
+        self.role_repo.get_by_id.return_value = role
+
+        self.use_case.execute(user_id="10", role_id="role-uuid-1", assigned_by_id="5")
+
+        self.callback.assert_called_once_with(
+            user_id="10", role_id="role-uuid-1", assigned_by="5"
+        )
+
+    def test_no_callback_does_not_raise(self):
+        role = make_role()
+        self.role_repo.get_by_id.return_value = role
+        use_case = AssignRoleToUserUseCase(
+            user_role_repository=self.user_role_repo,
+            role_repository=self.role_repo,
+        )
+        dto = use_case.execute(user_id="10", role_id="role-uuid-1")
+        assert dto.user_id == "10"
+
     def test_raises_when_role_not_found(self):
         self.role_repo.get_by_id.return_value = None
 
@@ -57,3 +79,4 @@ class TestAssignRoleToUserUseCase:
             self.use_case.execute(user_id="10", role_id="nonexistent")
 
         self.user_role_repo.save.assert_not_called()
+        self.callback.assert_not_called()

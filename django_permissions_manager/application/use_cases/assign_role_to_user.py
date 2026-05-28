@@ -1,13 +1,13 @@
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Callable, Optional
 
 from ..dto.user_role_dto import UserRoleDTO
 from ...domain.entities.user_role import UserRole
 from ...domain.repositories.user_role_repository import UserRoleRepository
 from ...domain.repositories.role_repository import RoleRepository
 from ...domain.value_objects.user_id import UserId
-from ...infrastructure.django.signals import role_assigned
+
 
 class AssignRoleToUserUseCase:
     """Application use case for assigning a role to a user.
@@ -15,20 +15,26 @@ class AssignRoleToUserUseCase:
     Attributes:
         user_role_repository (UserRoleRepository): Repository for user-role assignments.
         role_repository (RoleRepository): Repository for role entities.
+        on_assigned (Callable, optional): Callback invoked after a role is assigned.
+            Receives keyword arguments ``user_id``, ``role_id``, and ``assigned_by``.
+            Injected by the infrastructure layer (e.g. a Django signal).
     """
     def __init__(
         self,
         user_role_repository: UserRoleRepository,
-        role_repository: RoleRepository
+        role_repository: RoleRepository,
+        on_assigned: Optional[Callable[..., None]] = None,
     ):
         """Initializes the use case.
 
         Args:
             user_role_repository: The user role repository.
             role_repository: The role repository.
+            on_assigned: Optional callback fired after a successful assignment.
         """
         self.user_role_repository = user_role_repository
         self.role_repository = role_repository
+        self.on_assigned = on_assigned
 
     def execute(
         self,
@@ -67,13 +73,13 @@ class AssignRoleToUserUseCase:
         # 3. Persist
         self.user_role_repository.save(user_role)
 
-        # 4. Emit signal
-        role_assigned.send(
-            sender=self.__class__,
-            user_id=user_id,
-            role_id=role_id,
-            assigned_by=assigned_by_id,
-        )
+        # 4. Notify via callback (injected by infrastructure layer)
+        if self.on_assigned:
+            self.on_assigned(
+                user_id=user_id,
+                role_id=role_id,
+                assigned_by=assigned_by_id,
+            )
 
         # 5. Return DTO
         return UserRoleDTO(

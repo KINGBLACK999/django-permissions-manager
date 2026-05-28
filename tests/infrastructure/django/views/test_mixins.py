@@ -46,7 +46,7 @@ class TestRoleRequiredMixin:
         request = make_request()
 
         with patch(
-            "django_permissions_manager.infrastructure.django.views.mixins.GetUserRolesUseCase"
+            "django_permissions_manager.infrastructure.django.views.mixins.get_user_roles_use_case"
         ) as MockUseCase:
             MockUseCase.return_value.execute.return_value = [make_dto("Admin")]
             # Should not raise
@@ -64,7 +64,7 @@ class TestRoleRequiredMixin:
         request = make_request()
 
         with patch(
-            "django_permissions_manager.infrastructure.django.views.mixins.GetUserRolesUseCase"
+            "django_permissions_manager.infrastructure.django.views.mixins.get_user_roles_use_case"
         ) as MockUseCase:
             MockUseCase.return_value.execute.return_value = [make_dto("Viewer")]
             assert view.has_role(request) is False
@@ -74,7 +74,7 @@ class TestRoleRequiredMixin:
         request = make_request()
 
         with patch(
-            "django_permissions_manager.infrastructure.django.views.mixins.GetUserRolesUseCase"
+            "django_permissions_manager.infrastructure.django.views.mixins.get_user_roles_use_case"
         ) as MockUseCase:
             MockUseCase.return_value.execute.return_value = [make_dto("Viewer")]
             with pytest.raises(PermissionDenied):
@@ -92,7 +92,7 @@ class TestRoleRequiredMixin:
         request = make_request()
 
         with patch(
-            "django_permissions_manager.infrastructure.django.views.mixins.GetUserRolesUseCase"
+            "django_permissions_manager.infrastructure.django.views.mixins.get_user_roles_use_case"
         ) as MockUseCase:
             MockUseCase.return_value.execute.return_value = [make_dto("Editor")]
             assert view.has_role(request) is True

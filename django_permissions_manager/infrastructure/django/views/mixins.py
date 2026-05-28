@@ -1,8 +1,6 @@
 from django.contrib.auth.mixins import AccessMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
-from ..services import get_assign_role_use_case
-from ....application.use_cases.get_user_roles import GetUserRolesUseCase
-from ....infrastructure.django.repositories.django_user_role_repository import DjangoUserRoleRepository
+from ..services import get_user_roles_use_case
 
 
 class PermissionManagerMixin(PermissionRequiredMixin):
@@ -32,7 +30,7 @@ class RoleRequiredMixin(AccessMixin):
         if not required:
             return True
 
-        use_case = GetUserRolesUseCase(DjangoUserRoleRepository())
+        use_case = get_user_roles_use_case()
         user_roles = use_case.execute(user_id=str(request.user.id))
         assigned_role_names = {ur.role_name for ur in user_roles}
         return bool(required & assigned_role_names)

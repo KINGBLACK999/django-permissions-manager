@@ -9,11 +9,11 @@ from ..services import (
     get_create_permission_group_use_case,
     get_create_role_use_case,
     get_remove_role_use_case,
+    get_role_manager,
     get_user_roles_use_case,
 )
 from ...django.repositories.django_role_repository import DjangoRoleRepository
 from ...django.repositories.django_permission_group_repository import DjangoPermissionGroupRepository
-from ....domain.services.role_manager import RoleManager
 from .serializers import (
     AssignGroupToRoleSerializer,
     AssignRoleSerializer,
@@ -76,7 +76,7 @@ class RoleViewSet(ViewSet):
         role = role_repo.get_by_id(pk)
         if not role:
             return Response({'detail': 'Role not found.'}, status=status.HTTP_404_NOT_FOUND)
-        RoleManager(role_repo).activate_role(role)
+        get_role_manager(role_repo).activate_role(role)
         return Response({'detail': 'Role activated.'})
 
     @action(detail=True, methods=['post'])
@@ -86,7 +86,7 @@ class RoleViewSet(ViewSet):
         if not role:
             return Response({'detail': 'Role not found.'}, status=status.HTTP_404_NOT_FOUND)
         try:
-            RoleManager(role_repo).deactivate_role(role)
+            get_role_manager(role_repo).deactivate_role(role)
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'Role deactivated.'})
