@@ -31,7 +31,7 @@ class RoleFactory:
             Role: A new instance of a Role entity.
         """
         now = datetime.now(timezone.utc)
-        return Role(
+        role = Role(
             id=str(uuid.uuid4()),
             name=RoleName(name),
             description=description,
@@ -42,3 +42,5 @@ class RoleFactory:
             created_at=now,
             updated_at=now
         )
+        role.validate()
+        return role

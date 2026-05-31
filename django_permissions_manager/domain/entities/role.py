@@ -40,8 +40,16 @@ class Role:
         return any(p.matches(permission_code) for p in self.permissions)
 
     def validate(self) -> None:
-        """Performs domain business validations."""
-        pass
+        """Performs domain business validations.
+
+        Raises:
+            ValueError: If the role is a system role but is inactive.
+            ValueError: If updated_at is before created_at.
+        """
+        if self.is_system_role and not self.is_active:
+            raise ValueError("A system role cannot be inactive.")
+        if self.updated_at < self.created_at:
+            raise ValueError("updated_at cannot be before created_at.")
 
     def can_be_deleted(self) -> bool:
         """Checks if the role is allowed to be deleted (system roles are not)."""
