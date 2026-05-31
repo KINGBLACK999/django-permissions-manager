@@ -23,7 +23,6 @@ classifiers = [
 ]
 dependencies = [
     "Django>=6.0",
-    "djangorestframework>=3.14",
 ]
 
 [project.optional-dependencies]
