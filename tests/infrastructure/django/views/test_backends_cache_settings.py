@@ -1,14 +1,31 @@
-import pytest
 from unittest.mock import MagicMock, patch
 
 from django_permissions_manager.infrastructure.django.views.backends import (
     PermissionsManagerBackend,
-    _CACHE_ATTR,
 )
 
 
+def _make_fake_cache():
+    """Dict-backed fake that mimics Django's cache interface."""
+    store = {}
+
+    class FakeCache:
+        def get(self, key, default=None):
+            return store.get(key, default)
+
+        def set(self, key, value, timeout=None):
+            store[key] = value
+
+        def incr(self, key):
+            if key not in store:
+                raise ValueError("Key does not exist")
+            store[key] += 1
+
+    return FakeCache()
+
+
 class FakeUser:
-    """Plain object so hasattr/setattr behave correctly for cache tests."""
+    """Plain object so hasattr/setattr behave correctly."""
     is_active = True
     is_superuser = False
     id = 1
@@ -44,13 +61,17 @@ class TestBackendCacheSettings:
         user = make_user()
         mock_use_case = MagicMock()
         mock_use_case.execute.return_value = True
+        fake_cache = _make_fake_cache()
 
         with patch(
             "django_permissions_manager.infrastructure.django.views.backends.get_check_permission_use_case",
             return_value=mock_use_case,
         ), patch(
             "django_permissions_manager.infrastructure.django.views.backends.app_settings"
-        ) as mock_settings:
+        ) as mock_settings, patch(
+            "django_permissions_manager.infrastructure.django.views.backends.cache",
+            fake_cache,
+        ):
             mock_settings.CACHE_ENABLED = True
             self.backend.has_perm(user, "auth.view_user")
             self.backend.has_perm(user, "auth.view_user")

@@ -10,6 +10,7 @@ class RoleName:
     def __post_init__(self):
         if not self.value or not self.value.strip():
             raise ValueError("Role name cannot be empty.")
+        
         if len(self.value) > MAX_ROLE_NAME_LENGTH:
             raise ValueError(
                 f"Role name cannot exceed {MAX_ROLE_NAME_LENGTH} characters."

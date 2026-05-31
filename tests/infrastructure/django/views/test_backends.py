@@ -1,10 +1,27 @@
-import pytest
 from unittest.mock import MagicMock, patch
 
 from django_permissions_manager.infrastructure.django.views.backends import (
     PermissionsManagerBackend,
-    _CACHE_ATTR,
 )
+
+
+def _make_fake_cache():
+    """Dict-backed fake that mimics Django's cache interface."""
+    store = {}
+
+    class FakeCache:
+        def get(self, key, default=None):
+            return store.get(key, default)
+
+        def set(self, key, value, timeout=None):
+            store[key] = value
+
+        def incr(self, key):
+            if key not in store:
+                raise ValueError("Key does not exist")
+            store[key] += 1
+
+    return FakeCache()
 
 
 def make_user(is_active=True, is_superuser=False):
@@ -12,8 +29,6 @@ def make_user(is_active=True, is_superuser=False):
     user.is_active = is_active
     user.is_superuser = is_superuser
     user.id = 1
-    if hasattr(user, _CACHE_ATTR):
-        delattr(user, _CACHE_ATTR)
     return user
 
 
@@ -33,10 +48,14 @@ class TestPermissionsManagerBackend:
         user = make_user()
         mock_use_case = MagicMock()
         mock_use_case.execute.return_value = True
+        fake_cache = _make_fake_cache()
 
         with patch(
             "django_permissions_manager.infrastructure.django.views.backends.get_check_permission_use_case",
             return_value=mock_use_case,
+        ), patch(
+            "django_permissions_manager.infrastructure.django.views.backends.cache",
+            fake_cache,
         ):
             result = self.backend.has_perm(user, "auth.view_user")
 
@@ -49,10 +68,14 @@ class TestPermissionsManagerBackend:
         user = make_user()
         mock_use_case = MagicMock()
         mock_use_case.execute.return_value = True
+        fake_cache = _make_fake_cache()
 
         with patch(
             "django_permissions_manager.infrastructure.django.views.backends.get_check_permission_use_case",
             return_value=mock_use_case,
+        ), patch(
+            "django_permissions_manager.infrastructure.django.views.backends.cache",
+            fake_cache,
         ):
             self.backend.has_perm(user, "auth.view_user")
             self.backend.has_perm(user, "auth.view_user")
@@ -64,10 +87,14 @@ class TestPermissionsManagerBackend:
         user = make_user()
         mock_use_case = MagicMock()
         mock_use_case.execute.side_effect = [True, False]
+        fake_cache = _make_fake_cache()
 
         with patch(
             "django_permissions_manager.infrastructure.django.views.backends.get_check_permission_use_case",
             return_value=mock_use_case,
+        ), patch(
+            "django_permissions_manager.infrastructure.django.views.backends.cache",
+            fake_cache,
         ):
             r1 = self.backend.has_perm(user, "auth.view_user")
             r2 = self.backend.has_perm(user, "auth.add_user")
