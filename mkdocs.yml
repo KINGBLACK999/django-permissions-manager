@@ -1,0 +1,69 @@
+site_name: django-permissions-manager
+site_description: Role-based permission management for Django with hexagonal architecture and DDD.
+site_url: https://KINGBLACK999.github.io/django-permissions-manager/
+repo_url: https://github.com/KINGBLACK999/django-permissions-manager
+repo_name: KINGBLACK999/django-permissions-manager
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: green
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: green
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+  - Configuration:
+    - Settings Reference: configuration/settings.md
+    - Permission Labels: configuration/permission-labels.md
+    - Default Roles: configuration/default-roles.md
+  - Usage:
+    - Checking Permissions: usage/checking-permissions.md
+    - Managing Roles: usage/roles.md
+    - Permission Groups: usage/permission-groups.md
+    - Signals: usage/signals.md
+    - Views & Mixins: usage/views.md
+  - API Reference:
+    - Use Cases: api/use-cases.md
+    - Services: api/services.md
+  - Architecture: architecture.md
+  - Development: development.md
