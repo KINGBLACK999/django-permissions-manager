@@ -2,8 +2,16 @@
 
 ## 1. Install the package
 
+The library is not yet published on PyPI. Install it directly from GitHub:
+
 ```bash
-pip install django-permissions-manager
+pip install git+https://github.com/KINGBLACK999/django-permissions-manager.git
+```
+
+To pin a specific commit or tag:
+
+```bash
+pip install git+https://github.com/KINGBLACK999/django-permissions-manager.git@v0.1.0
 ```
 
 ---

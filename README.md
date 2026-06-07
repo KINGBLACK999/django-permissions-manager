@@ -17,8 +17,16 @@ The library provides the full RBAC engine — domain logic, repositories, use ca
 
 ## Installation
 
+> **Note:** the package is not yet published on PyPI. Install directly from GitHub:
+
 ```bash
-pip install django-permissions-manager
+pip install git+https://github.com/KINGBLACK999/django-permissions-manager.git
+```
+
+To pin a specific commit or tag:
+
+```bash
+pip install git+https://github.com/KINGBLACK999/django-permissions-manager.git@v0.1.0
 ```
 
 ---
