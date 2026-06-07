@@ -28,6 +28,12 @@ class UserRoleModel(models.Model):
         db_table = 'pm_user_roles'
         verbose_name = 'User Role Assignment'
         verbose_name_plural = 'User Role Assignments'
+        default_permissions = ()
+        permissions = [
+            ("view_userrole",   "Can view role assignments"),
+            ("assign_role",     "Can assign roles to users"),
+            ("revoke_role",     "Can revoke role assignments from users"),
+        ]
         unique_together = ('user', 'role')
 
     def __str__(self):

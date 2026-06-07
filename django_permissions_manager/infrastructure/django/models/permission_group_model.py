@@ -16,6 +16,13 @@ class PermissionGroupModel(models.Model):
         db_table = 'pm_permission_groups'
         verbose_name = 'Permission Group'
         verbose_name_plural = 'Permission Groups'
+        default_permissions = ()
+        permissions = [
+            ("view_permissiongroup",   "Can view and list permission groups"),
+            ("add_permissiongroup",    "Can create new permission groups"),
+            ("change_permissiongroup", "Can modify a permission group's name and permissions"),
+            ("delete_permissiongroup", "Can delete permission groups"),
+        ]
 
     def __str__(self):
         return self.name

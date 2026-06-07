@@ -28,6 +28,14 @@ class RoleModel(models.Model):
         db_table = 'pm_roles'
         verbose_name = 'Role'
         verbose_name_plural = 'Roles'
+        default_permissions = ()
+        permissions = [
+            ("view_role",     "Can view and list roles"),
+            ("add_role",      "Can create new roles"),
+            ("change_role",   "Can modify a role's name, description and assigned permissions"),
+            ("delete_role",   "Can permanently delete roles"),
+            ("activate_role", "Can activate or deactivate roles"),
+        ]
         constraints = [
             # Constraint for entity-specific roles
             models.UniqueConstraint(
