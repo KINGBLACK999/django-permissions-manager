@@ -11,6 +11,14 @@ DEFAULTS = {
         {'name': 'Editor', 'description': 'Can edit content but not manage users'},
         {'name': 'Viewer', 'description': 'Read-only access'},
     ],
+    # Map codename -> human-readable label to override the library defaults.
+    # Applied automatically after every `manage.py migrate`.
+    # Example:
+    #   PERMISSIONS_MANAGER_PERMISSION_LABELS = {
+    #       "change_role": "Can modify role name and permissions",
+    #       "assign_role": "Can assign roles to users",
+    #   }
+    'PERMISSION_LABELS': {},
 }
 
 class AppSettings:

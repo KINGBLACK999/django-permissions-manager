@@ -70,6 +70,7 @@ All settings are optional and have defaults. Override them in your project's `se
 | `CACHE_TIMEOUT` | `3600` | Cache TTL in seconds |
 | `USER_MODEL` | `settings.AUTH_USER_MODEL` | The user model to associate roles with |
 | `DEFAULT_ROLES` | See below | Roles created by `create_default_roles` |
+| `PERMISSION_LABELS` | `{}` | Override the human-readable name of any library permission |
 
 **Example:**
 
@@ -84,6 +85,32 @@ PERMISSIONS_MANAGER_DEFAULT_ROLES = [
     {"name": "Viewer", "description": "Read-only access"},
 ]
 ```
+
+### Custom permission labels
+
+By default the library ships English labels for its 12 permissions. Override any of them in your project's `settings.py` — the new names are applied automatically on every `manage.py migrate`:
+
+```python
+PERMISSIONS_MANAGER_PERMISSION_LABELS = {
+    # RoleModel
+    "view_role":     "Can view and list roles",
+    "add_role":      "Can create new roles",
+    "change_role":   "Can modify a role's name, description and assigned permissions",
+    "delete_role":   "Can permanently delete roles",
+    "activate_role": "Can activate or deactivate roles",
+    # UserRoleModel
+    "view_userrole": "Can view role assignments",
+    "assign_role":   "Can assign roles to users",
+    "revoke_role":   "Can revoke role assignments from users",
+    # PermissionGroupModel
+    "view_permissiongroup":   "Can view and list permission groups",
+    "add_permissiongroup":    "Can create new permission groups",
+    "change_permissiongroup": "Can modify a permission group's name and permissions",
+    "delete_permissiongroup": "Can delete permission groups",
+}
+```
+
+Only include the keys you want to change — omitted permissions keep the library default.
 
 ### Cache backend
 
