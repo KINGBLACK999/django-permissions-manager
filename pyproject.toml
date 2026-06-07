@@ -39,3 +39,10 @@ include = ["django_permissions_manager*"]
 DJANGO_SETTINGS_MODULE = "django_permissions_manager.settings"
 python_files = ["test_*.py"]
 testpaths = ["tests"]
+markers = [
+    "roles: Role entity, value objects, services, use cases, repository and mapper tests",
+    "permissions: Permission value object, checker service, use case and mapper tests",
+    "permission_groups: Permission group use cases and mapper tests",
+    "user_roles: User role value objects, assignment use cases, repository and mapper tests",
+    "django_integration: Django auth backend and view mixin tests",
+]

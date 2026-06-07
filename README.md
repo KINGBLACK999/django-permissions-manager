@@ -298,6 +298,45 @@ def deactivate_role(role_id: str):
 
 ---
 
+## Development
+
+### Install dev dependencies
+
+```bash
+pip install -e ".[dev]"
+```
+
+### Run the test suite
+
+```bash
+pytest          # all tests
+pytest -v       # verbose output
+```
+
+### Run tests by feature
+
+Tests are organized by domain feature. Use `-m` to target a specific area:
+
+| Command | What it runs |
+|---|---|
+| `pytest -m roles` | Role entity, value objects, services, use cases, repository and mapper |
+| `pytest -m permissions` | Permission value object, checker, use case and mapper |
+| `pytest -m permission_groups` | Permission group use cases and mapper |
+| `pytest -m user_roles` | User role value objects, assignment use cases, repository and mapper |
+| `pytest -m django_integration` | Auth backend and view mixin |
+
+Or use the Makefile shortcuts:
+
+```bash
+make test-roles
+make test-permissions
+make test-permission-groups
+make test-user-roles
+make test-django
+```
+
+---
+
 ## Architecture
 
 The library follows hexagonal architecture (Ports & Adapters) with DDD:

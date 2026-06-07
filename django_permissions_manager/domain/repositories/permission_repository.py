@@ -1,27 +1,21 @@
 import abc
-from typing import List, Optional
-from ..entities.permission import Permission
-from ..value_objects.permission_code import PermissionCode
 
-class PermissionRepository(abc.ABC):
-    """Abstract interface (Port) for Permission persistence."""
-    
+from ..entities.permission import Permission
+from .permission_read_repository import PermissionReadRepository
+
+
+class PermissionRepository(PermissionReadRepository):
+    """Full CRUD port for Permission persistence.
+
+    Extends the read-only interface with write capability.
+    Use this when an adapter needs to create permissions programmatically
+    (e.g. a custom backend that doesn't rely on Django migrations).
+
+    Note: The built-in Django adapter (DjangoPermissionRepository) intentionally
+    implements only PermissionReadRepository, because Django generates permissions
+    automatically via the migration system.
+    """
+
     @abc.abstractmethod
     def save(self, permission: Permission) -> None:
-        """Saves a permission entity."""
-        pass
-
-    @abc.abstractmethod
-    def get_by_id(self, permission_id: str) -> Optional[Permission]:
-        """Retrieves a permission by ID."""
-        pass
-
-    @abc.abstractmethod
-    def get_by_code(self, code: PermissionCode) -> Optional[Permission]:
-        """Retrieves a permission by its unique code."""
-        pass
-
-    @abc.abstractmethod
-    def get_all(self) -> List[Permission]:
-        """Retrieves all permissions."""
-        pass
+        """Persists a permission entity."""

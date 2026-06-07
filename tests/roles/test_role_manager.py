@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime, timezone
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 
 from django_permissions_manager.domain.entities.role import Role
 from django_permissions_manager.domain.exceptions.role_exceptions import (
@@ -61,15 +61,13 @@ class TestRoleManager:
         self.callback.assert_called_once_with(role_id="role-1", is_active=True)
 
     def test_no_callback_does_not_raise(self):
-        """RoleManager without callback should work silently."""
         manager = RoleManager(self.repo)
         role = make_role()
-        manager.deactivate_role(role)  # should not raise
+        manager.deactivate_role(role)
         assert role.is_active is False
 
     def test_ensure_unique_name_raises_if_exists(self):
-        existing = make_role()
-        self.repo.get_by_name.return_value = existing
+        self.repo.get_by_name.return_value = make_role()
         with pytest.raises(RoleAlreadyExistsException):
             self.manager.ensure_role_name_is_unique("Editor")
 

@@ -4,7 +4,7 @@ from ..interfaces.entity_service import EntityService
 from ...domain.services.role_factory import RoleFactory
 from ...domain.services.role_manager import RoleManager
 from ...domain.repositories.role_repository import RoleRepository
-from ...domain.repositories.permission_repository import PermissionRepository
+from ...domain.repositories.permission_read_repository import PermissionReadRepository
 from ...domain.value_objects.entity_reference import EntityReference
 from ...domain.value_objects.permission_code import PermissionCode
 
@@ -16,7 +16,7 @@ class CreateRoleUseCase:
 
     Attributes:
         role_repository (RoleRepository): Repository for role persistence.
-        permission_repository (PermissionRepository): Repository to fetch permission entities.
+        permission_repository (PermissionReadRepository): Repository to fetch permission entities.
         role_manager (RoleManager): Domain service to enforce business rules.
     """
     #: Valid operating modes.
@@ -25,7 +25,7 @@ class CreateRoleUseCase:
     def __init__(
         self,
         role_repository: RoleRepository,
-        permission_repository: PermissionRepository,
+        permission_repository: PermissionReadRepository,
         role_manager: RoleManager,
         entity_service: Optional[EntityService] = None,
         mode: str = 'BOTH',
@@ -34,7 +34,7 @@ class CreateRoleUseCase:
 
         Args:
             role_repository: Repository for roles.
-            permission_repository: Repository for permissions.
+            permission_repository: Read-only repository for permissions.
             role_manager: Manager for role business logic.
             entity_service: Optional service to validate external entities for scoped roles.
             mode: Operating mode ('GLOBAL', 'ENTITY', or 'BOTH'). Controls whether

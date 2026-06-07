@@ -1,7 +1,7 @@
 from typing import List
 from ..dto.role_dto import RoleDTO
 from ...domain.repositories.role_repository import RoleRepository
-from ...domain.repositories.permission_repository import PermissionRepository
+from ...domain.repositories.permission_read_repository import PermissionReadRepository
 from ...domain.value_objects.permission_code import PermissionCode
 
 class UpdateRolePermissionsUseCase:
@@ -10,7 +10,7 @@ class UpdateRolePermissionsUseCase:
     def __init__(
         self,
         role_repository: RoleRepository,
-        permission_repository: PermissionRepository
+        permission_repository: PermissionReadRepository
     ):
         """Initializes the use case.
 

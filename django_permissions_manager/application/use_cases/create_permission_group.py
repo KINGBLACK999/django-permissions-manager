@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from ...domain.entities.permission_group import PermissionGroup
 from ...domain.repositories.permission_group_repository import PermissionGroupRepository
-from ...domain.repositories.permission_repository import PermissionRepository
+from ...domain.repositories.permission_read_repository import PermissionReadRepository
 from ...domain.value_objects.permission_code import PermissionCode
 
 
@@ -22,7 +22,7 @@ class CreatePermissionGroupUseCase:
     def __init__(
         self,
         group_repository: PermissionGroupRepository,
-        permission_repository: PermissionRepository,
+        permission_repository: PermissionReadRepository,
     ):
         self.group_repository = group_repository
         self.permission_repository = permission_repository
