@@ -1,4 +1,7 @@
+import warnings
+
 from django.apps import AppConfig
+
 
 class DjangoPermissionsManagerConfig(AppConfig):
     """Django AppConfig for the permissions manager."""
@@ -34,6 +37,10 @@ class DjangoPermissionsManagerConfig(AppConfig):
         # applied on top of freshly created permissions.
         post_migrate.connect(_apply_permission_labels, sender=self)
 
+        # Optional audit log integration — only activated when both
+        # PERMISSIONS_MANAGER_AUDIT_LOG = True and django-auditlog is installed.
+        _setup_audit_log()
+
 
 def _apply_permission_labels(sender, **kwargs):
     """Signal handler: resolve imports and delegate to the pure helper."""
@@ -61,3 +68,50 @@ def _update_permission_labels(permission_model, labels):
             content_type__app_label='django_permissions_manager',
             codename=codename,
         ).update(name=name)
+
+
+def _setup_audit_log():
+    """Optionally register library models with django-auditlog.
+
+    Only activates when ALL three conditions are met:
+      1. PERMISSIONS_MANAGER_AUDIT_LOG = True in project settings.
+      2. 'auditlog' is in INSTALLED_APPS.
+      3. django-auditlog is installed (importable).
+
+    If condition 1 is True but conditions 2 or 3 fail, a RuntimeWarning is
+    emitted so the developer knows the setting has no effect.
+    """
+    from .settings import app_settings
+
+    if not app_settings.AUDIT_LOG:
+        return  # opted out (default) — nothing to do
+
+    # Check django-auditlog is importable.
+    try:
+        from auditlog.registry import auditlog as auditlog_registry
+    except ImportError:
+        warnings.warn(
+            "PERMISSIONS_MANAGER_AUDIT_LOG is True but django-auditlog is not "
+            "installed. Install it with: pip install django-auditlog",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        return
+
+    # Check 'auditlog' is in INSTALLED_APPS.
+    from django.apps import apps as django_apps
+    if not django_apps.is_installed('auditlog'):
+        warnings.warn(
+            "PERMISSIONS_MANAGER_AUDIT_LOG is True but 'auditlog' is not in "
+            "INSTALLED_APPS. Add it to enable audit logging.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        return
+
+    # All conditions met — register models.
+    from .models.role_model import RoleModel
+    from .models.user_role_model import UserRoleModel
+
+    auditlog_registry.register(RoleModel)
+    auditlog_registry.register(UserRoleModel)

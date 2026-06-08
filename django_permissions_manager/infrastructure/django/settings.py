@@ -19,6 +19,13 @@ DEFAULTS = {
     #       "assign_role": "Can assign roles to users",
     #   }
     'PERMISSION_LABELS': {},
+
+    # Enable audit logging for RoleModel and UserRoleModel.
+    # Requires `django-auditlog` to be installed and 'auditlog' in INSTALLED_APPS.
+    # Default: False (opt-in).
+    # To enable, add to your project settings:
+    #   PERMISSIONS_MANAGER_AUDIT_LOG = True
+    'AUDIT_LOG': False,
 }
 
 class AppSettings:
